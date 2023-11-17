@@ -119,7 +119,7 @@ def _get_index_and_mappings(
 
         node_parser = UnstructuredElementNodeParser()
 
-        logger.info(f"Creating hierarchical node tree from tesla 10k documents")
+        logger.info("Creating hierarchical node tree from tesla 10k documents")
         reader = FlatReader()
         docs = reader.load_data(data_path)
         raw_nodes = node_parser.get_nodes_from_documents(docs)
@@ -129,7 +129,7 @@ def _get_index_and_mappings(
         )
 
         # construct top-level vector index + query engine
-        logger.info(f"Indexing nodes.")
+        logger.info("Indexing nodes.")
         vector_index = VectorStoreIndex(base_nodes)
 
         # save vector index to storage
@@ -170,14 +170,11 @@ def _get_query_tool(
 
     # define query engine
     query_engine = RetrieverQueryEngine.from_args(recursive_retriever)
-    # convert query engine to tool
-    query_engine_tool = QueryEngineTool.from_defaults(
+    return QueryEngineTool.from_defaults(
         query_engine=query_engine,
         name=name,
         description=description,
     )
-
-    return query_engine_tool
 
 
 def get_agent():
@@ -225,6 +222,6 @@ def get_agent():
         callback_manager=callback_manager,
     )
 
-    logger.info(f"Built agent.")
-        
+    logger.info("Built agent.")
+
     return agent

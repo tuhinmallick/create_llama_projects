@@ -61,9 +61,7 @@ async def chat(
     async def event_generator():
         queue = agent.callback_manager.handlers[0].queue
         while len(queue) > 0:
-            item = queue.pop(0)
-            yield item
-
+            yield queue.pop(0)
         for token in response.response_gen:
             # If client closes connection, stop sending events
             if await request.is_disconnected():

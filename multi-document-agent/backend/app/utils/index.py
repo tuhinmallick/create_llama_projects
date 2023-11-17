@@ -137,9 +137,6 @@ def _download_data(out_dir: str, wiki_titles: List[str]) -> None:
 
             with open(data_path / f"{title}.txt", "w") as fp:
                 fp.write(wiki_text)
-        else:
-            pass
-
         # load into city docs
         city_docs[title] = SimpleDirectoryReader(
             input_files=[f"{out_dir}/{title}.txt"]
@@ -259,7 +256,7 @@ def _build_top_agent(
         )
         storage_context.persist(persist_dir=f"./{storage_dir}/top")
         # TODO: don't access private property
-        
+
     else:
         # initialize storage context from existing storage
         storage_context = StorageContext.from_defaults(
@@ -268,7 +265,7 @@ def _build_top_agent(
         index = load_index_from_storage(storage_context)
         obj_index = ObjectIndex(index, tool_mapping)
 
-    top_agent = OpenAIAgent.from_tools(
+    return OpenAIAgent.from_tools(
         tool_retriever=obj_index.as_retriever(similarity_top_k=3),
         system_prompt=""" \
     You are an agent designed to answer queries about a set of given cities.
@@ -276,10 +273,8 @@ def _build_top_agent(
 
     """,
         verbose=True,
-        callback_manager=callback_manager
+        callback_manager=callback_manager,
     )
-
-    return top_agent
 
 
 WIKI_TITLES = [
@@ -321,6 +316,6 @@ def get_agent():
     # build top-level agent
     top_agent = _build_top_agent(STORAGE_DIR, doc_agents, callback_manager)
 
-    logger.info(f"Built agent.")
-        
+    logger.info("Built agent.")
+
     return top_agent
