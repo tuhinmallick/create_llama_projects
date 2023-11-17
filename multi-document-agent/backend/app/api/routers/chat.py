@@ -74,8 +74,7 @@ async def chat(
                 yield next_item
             elif isinstance(next_item, StreamingAgentChatResponse):
                 response = cast(StreamingAgentChatResponse, next_item)
-                for token in response.response_gen:
-                    yield token
+                yield from response.response_gen
                 # if not string, then it is the end of the stream
                 break
             else:
